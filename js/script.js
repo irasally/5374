@@ -44,8 +44,18 @@ var AreaModel = function() {
 */
   this.sortTrash = function() {
     this.trash.sort(function(a, b) {
-      var at = a.mostRecent.getTime();
-      var bt = b.mostRecent.getTime();
+      var amr = a.mostRecent;
+      var bmr = b.mostRecent;
+      if (!amr && !bmr) {
+        return 0;
+      } else if (amr && !bmr) {
+        return -1;
+      } else if (!amr && bmr) {
+        return 1;
+      }
+
+      var at = amr.getTime();
+      var bt = bmr.getTime();
       if (at < bt) return -1;
       if (at > bt) return 1;
       return 0;
@@ -93,6 +103,9 @@ var TrashModel = function(_lable, _cell) {
   this.dayLabel = result_text;
 
   this.getDateLabel = function() {
+    if (!this.mostRecent) {
+      return "";
+    }
     var result_text = this.mostRecent.getFullYear() + "/" + (1 + this.mostRecent.getMonth()) + "/" + this.mostRecent.getDate();
     return this.dayLabel + " " + result_text;
   }
@@ -439,10 +452,15 @@ $(function() {
 
           var dateLabel = trash.getDateLabel();
           //あと何日かを計算する処理です。
-          var leftDay = Math.ceil((trash.mostRecent.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+          var leftDay = null;
+          if (trash.mostRecent) {
+            leftDay = Math.ceil((trash.mostRecent.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+          }
 
           var leftDayText = "";
-          if (leftDay == 0) {
+          if (leftDay == null) {
+            leftDayText = "次のゴミ収集日のデータが登録されていません";
+          } else if (leftDay == 0) {
             leftDayText = "今日";
           } else if (leftDay == 1) {
             leftDayText = "明日";
