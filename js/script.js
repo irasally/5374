@@ -459,7 +459,7 @@ $(function() {
 
           var leftDayText = "";
           if (leftDay == null) {
-            leftDayText = "次のゴミ収集日のデータが登録されていません";
+            leftDayText = "データなし";
           } else if (leftDay == 0) {
             leftDayText = "今日";
           } else if (leftDay == 1) {
